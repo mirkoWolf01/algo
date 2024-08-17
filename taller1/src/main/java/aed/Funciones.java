@@ -2,18 +2,15 @@ package aed;
 
 class Funciones {
     int cuadrado(int x) {
-        // COMPLETAR
-        return 0;
+        return x * x;
     }
 
     double distancia(double x, double y) {
-        // COMPLETAR
-        return 0.0;
+        return Math.sqrt(x * x + y * y);
     }
 
     boolean esPar(int n) {
-        // COMPLETAR
-        return false;
+        return ((n % 2) == 0);
     }
 
     boolean esBisiesto(int n) {
