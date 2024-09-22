@@ -11,6 +11,11 @@ public class Horario {
         _min = minutos;
     }
 
+    public Horario(Horario horario) {
+        _hora = horario.hora();
+        _min = horario.minutos();
+    }
+
     public int hora() {
         return _hora;
     }
@@ -22,11 +27,12 @@ public class Horario {
     @Override
     public String toString() {
         String m = String.valueOf(_min);
+        String h = String.valueOf(_hora);
 
-        if (_min < 10) {
+        if (_min < 10 && _min > 0) {
             m = MessageFormat.format("0{0}", _min);
         }
-        return MessageFormat.format("{0}:{1}", _hora, m);
+        return MessageFormat.format("{0}:{1}", h, m);
     }
 
     @Override
