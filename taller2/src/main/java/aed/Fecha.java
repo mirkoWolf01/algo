@@ -1,37 +1,55 @@
 package aed;
 
+import java.text.MessageFormat;
+
 public class Fecha {
+    private int _dia;
+    private int _mes;
+
     public Fecha(int dia, int mes) {
-        // Implementar
+        _dia = dia;
+        _mes = mes;
     }
 
     public Fecha(Fecha fecha) {
-        // Implementar
+        _dia = fecha.dia();
+        _mes = fecha.mes();
     }
 
     public Integer dia() {
-        // Implementar
-        return -1;
+        return _dia;
     }
 
     public Integer mes() {
-        // Implementar
-        return -1;
+        return _mes;
     }
 
+    @Override
     public String toString() {
-        // Implementar
-        return "";
+        return MessageFormat.format("{0}/{1}", _dia, _mes);
     }
 
     @Override
     public boolean equals(Object otra) {
-        // Implementar
-        return true;
+        if (otra.getClass() != this.getClass() || otra == null) {
+            return false;
+        }
+        Fecha otraFecha = (Fecha) otra;
+        return (this.dia() == otraFecha.dia() && this.mes() == otraFecha.mes());
     }
 
     public void incrementarDia() {
-        // Implementar
+        if (diasEnMes(_mes) > _dia) {
+            _dia++;
+        } else {
+            _dia = 1;
+            if (_mes != 12) {
+                _mes++;
+            } else {
+                _mes = 1;
+            }
+        }
+
     }
 
     private int diasEnMes(int mes) {

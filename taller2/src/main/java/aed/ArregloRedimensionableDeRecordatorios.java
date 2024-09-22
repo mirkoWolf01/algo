@@ -1,18 +1,18 @@
 package aed;
 
 class ArregloRedimensionableDeRecordatorios {
+    private Recordatorio[] sec;
 
     public ArregloRedimensionableDeRecordatorios() {
-        // Implementar
+
     }
 
     public int longitud() {
-        // Implementar
-        return -1;
+        return sec.length;
     }
 
     public void agregarAtras(Recordatorio i) {
-        // Implementar
+        new Recordatorio(i.mensaje(), i.fecha(), i.horario());
     }
 
     public Recordatorio obtener(int i) {

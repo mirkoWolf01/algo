@@ -89,9 +89,11 @@ public class AgendaTests {
 
     @Test
     void horarioToString() {
-        Horario h = new Horario(10, 30);
+        Horario h1 = new Horario(10, 30);
+        Horario h2 = new Horario(1, 12);
 
-        assertEquals("10:30", h.toString());
+        assertEquals("10:30", h1.toString());
+        assertEquals("01:12", h2.toString());
     }
 
     @Test

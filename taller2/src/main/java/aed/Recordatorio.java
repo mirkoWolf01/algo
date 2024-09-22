@@ -1,36 +1,45 @@
 package aed;
 
+import java.text.MessageFormat;
+
 public class Recordatorio {
+    private String _msg;
+    private Fecha _fecha;
+    private Horario _horario;
 
     public Recordatorio(String mensaje, Fecha fecha, Horario horario) {
-        // Implementar
+        _msg = mensaje;
+        _fecha = new Fecha(fecha.dia(), fecha.mes());
+        _horario = new Horario(horario.hora(), horario.minutos());
     }
 
     public Horario horario() {
-        // Implementar
-        return null;
+        return new Horario(_horario.hora(), _horario.minutos());
     }
 
     public Fecha fecha() {
-        // Implementar
-        return null;
+        return new Fecha(_fecha.dia(), _fecha.mes());
     }
 
     public String mensaje() {
-        // Implementar
-        return "";
+        return _msg;
     }
 
     @Override
     public String toString() {
-        // Implementar
-        return "";
+        return MessageFormat.format("{0} @ {1} {2}", _msg, _fecha, _horario.toString());
     }
 
     @Override
     public boolean equals(Object otro) {
-        // Implementar
-        return true;
+        if (otro.getClass() != this.getClass() || otro == null) {
+            return false;
+        }
+        Recordatorio otroRec = (Recordatorio) otro;
+
+        return (otroRec.mensaje() == this.mensaje() &&
+                otroRec.fecha() == this.fecha() &&
+                otroRec.horario() == this.horario());
     }
 
 }
