@@ -35,7 +35,7 @@ public class Fecha {
             return false;
         }
         Fecha otraFecha = (Fecha) otra;
-        return (this.dia() == otraFecha.dia() && this.mes() == otraFecha.mes());
+        return (_dia == otraFecha.dia() && _mes == otraFecha.mes());
     }
 
     public void incrementarDia() {
