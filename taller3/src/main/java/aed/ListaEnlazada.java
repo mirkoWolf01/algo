@@ -1,90 +1,161 @@
 package aed;
 
 import java.util.*;
+import java.text.MessageFormat;
 
 public class ListaEnlazada<T> implements Secuencia<T> {
-    private T[] _sec;
+    private Nodo fst;
+    private Nodo lst;
+    private int size;
 
     private class Nodo {
-        private T _ahead;
-        private T _behind;
+        private Nodo _next;
+        private Nodo _former;
+        private T _val;
+
+        public Nodo(T val, Nodo next, Nodo former) {
+            _next = next;
+            _val = val;
+            _former = former;
+        }
+
+        public T getValue() {
+            return _val;
+        }
+
+        public Nodo getNext() {
+            return _next;
+        }
+
+        public Nodo getFormer() {
+            return _former;
+        }
+
+        public void setNext(Nodo elem) {
+            _next = elem;
+        }
+
+        public void setFormer(Nodo elem) {
+            _former = elem;
+        }
+
+        public void setValue(T elem) {
+            _val = elem;
+        }
     }
 
     public ListaEnlazada() {
-        _sec = (T[]) new Object[0];
+        fst = null;
+        lst = null;
+        size = 0;
     }
 
     public int longitud() {
-        return _sec.length;
+        return size;
     }
 
     public void agregarAdelante(T elem) {
-        T[] nueva_sec = (T[]) new Object[_sec.length + 1];
-        nueva_sec[0] = elem;
-        for (int i = 0; i < _sec.length; i++) {
-            nueva_sec[i + 1] = _sec[i];
+        Nodo addedNode = new Nodo(elem, fst, null);
+        if (lst == null) {
+            lst = addedNode;
+        } else {
+            fst.setFormer(addedNode);
         }
-        _sec = nueva_sec;
+        fst = addedNode;
+        size += 1;
     }
 
     public void agregarAtras(T elem) {
-        T[] nueva_sec = (T[]) new Object[_sec.length + 1];
-        for (int i = 0; i < _sec.length; i++) {
-            nueva_sec[i] = _sec[i];
+        Nodo addedNode = new Nodo(elem, null, lst);
+        if (fst == null) {
+            fst = addedNode;
+        } else {
+            lst.setNext(addedNode);
         }
-        nueva_sec[_sec.length] = elem;
-        _sec = nueva_sec;
+        lst = addedNode;
+        size += 1;
     }
 
     public T obtener(int i) {
-        return _sec[i];
+        return obtenerNodo(i).getValue();
+    }
+
+    public Nodo obtenerNodo(int i) {
+        Nodo iNodo = fst;
+        for (int j = 0; j < i; j++) {
+            iNodo = iNodo.getNext();
+        }
+        return iNodo;
     }
 
     public void eliminar(int i) {
-        T[] nueva_sec = (T[]) new Object[_sec.length - 1];
-        for (int j = 0; j < i; j++) {
-            nueva_sec[j] = _sec[j];
+        Nodo del = obtenerNodo(i);
+        if (del != fst && del != lst) {
+            del.getFormer().setNext(del.getNext());
         }
-        for (int j = i + 1; j < _sec.length; j++) {
-            nueva_sec[j - 1] = _sec[i];
+        if (del == fst) {
+            fst = del.getNext();
         }
+        if (del == lst) {
+            lst = del.getNext();
+        }
+        size -= 1;
+        del = null;
     }
 
     public void modificarPosicion(int indice, T elem) {
-        throw new UnsupportedOperationException("No implementada aun");
+        Nodo cambiado = obtenerNodo(indice);
+        cambiado.setValue(elem);
     }
 
     public ListaEnlazada(ListaEnlazada<T> lista) {
-        throw new UnsupportedOperationException("No implementada aun");
+        ListaEnlazada<T> res = new ListaEnlazada<>();
+        for (int i = 0; i < lista.longitud(); i++) {
+            res.agregarAtras(lista.obtener(i));
+        }
+        fst = res.fst;
+        lst = res.lst;
+        size = res.size;
     }
 
     @Override
     public String toString() {
-        throw new UnsupportedOperationException("No implementada aun");
+        String res = MessageFormat.format("[{0},", obtener(0));
+        for (int i = 1; i < size - 1; i++) {
+            res += MessageFormat.format(" {0},", obtener(i));
+        }
+        if (size > 1) {
+            res += MessageFormat.format(" {0}]", obtener(size - 1));
+        }
+        return res;
     }
 
     private class ListaIterador implements Iterador<T> {
-        // Completar atributos privados
+        private int pos;
 
         public boolean haySiguiente() {
-            throw new UnsupportedOperationException("No implementada aun");
+            return pos < size;
         }
 
         public boolean hayAnterior() {
-            throw new UnsupportedOperationException("No implementada aun");
+            return pos > 0;
         }
 
         public T siguiente() {
-            throw new UnsupportedOperationException("No implementada aun");
+            T value = obtener(pos);
+            pos += 1;
+            return value;
         }
 
         public T anterior() {
-            throw new UnsupportedOperationException("No implementada aun");
+            pos -= 1;
+            T value = obtener(pos);
+            return value;
         }
     }
 
     public Iterador<T> iterador() {
-        throw new UnsupportedOperationException("No implementada aun");
+        return new ListaIterador();
     }
 
 }

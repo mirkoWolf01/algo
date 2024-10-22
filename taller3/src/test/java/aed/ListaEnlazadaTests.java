@@ -25,11 +25,14 @@ class ListaEnlazadaTests {
         // !!!! Nuevos !!!!
         lista.agregarAdelante(12);
         lista.agregarAdelante(0);
+        lista.agregarAdelante(130);
 
-        assertEquals(3, lista.longitud());
-        assertEquals(0, lista.obtener(0));
-        assertEquals(12, lista.obtener(1));
-        assertEquals(42, lista.obtener(2));
+        assertEquals(4, lista.longitud());
+
+        assertEquals(130, lista.obtener(0));
+        assertEquals(0, lista.obtener(1));
+        assertEquals(12, lista.obtener(2));
+        assertEquals(42, lista.obtener(3));
     }
 
     @Test
@@ -85,6 +88,7 @@ class ListaEnlazadaTests {
         lista.agregarAtras(44);
 
         assertEquals(5, lista.longitud());
+
         assertEquals(40, lista.obtener(0));
         assertEquals(41, lista.obtener(1));
         assertEquals(42, lista.obtener(2));
