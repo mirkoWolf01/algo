@@ -9,30 +9,13 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
     private int _len;
 
     private class Nodo {
-        public Nodo left;
-        public Nodo right;
+        public Nodo left, right;
         public T value;
-        public Nodo father;
 
         public Nodo(T _val) {
-            left = null;
-            right = null;
+            left = right = null;
             value = _val;
         }
-
-        public Nodo(T _val, Nodo _father) {
-            left = null;
-            right = null;
-            value = _val;
-            father = _father;
-        }
-
-        public Nodo(T _val, Nodo _left, Nodo _right) {
-            left = _left;
-            value = _val;
-            right = _right;
-        }
-
     }
 
     public ABB() {
@@ -56,6 +39,13 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         return actual.value;
     }
 
+    private T minimo_desde(Nodo actual) {
+        while (actual.left != null) {
+            actual = actual.left;
+        }
+        return actual.value;
+    }
+
     public T maximo() {
         Nodo actual = _raiz;
         while (actual.right != null) {
@@ -66,127 +56,90 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
 
     public void insertar(T elem) {
         if (!pertenece(elem)) {
+            _raiz = insert_recursive(_raiz, elem);
             _len += 1;
         }
-        if (_raiz == null) {
-            _raiz = new Nodo(elem);
-        } else {
-            Nodo actual = _raiz;
-            int diff = elem.compareTo(actual.value);
-            while (diff != 0) {
-                if (diff < 0) {
-                    if (actual.left == null) {
-                        actual.left = new Nodo(elem, actual);
-
-                    }
-                    actual = actual.left;
-                }
-                if (diff > 0) {
-                    if (actual.right == null) {
-                        actual.right = new Nodo(elem, actual);
-                    }
-                    actual = actual.right;
-                }
-                diff = elem.compareTo(actual.value);
-            }
-        }
-
     }
 
-    public boolean pertenece(T elem) {
-        boolean res = false;
-        if (!isNull()) {
-            if (getNodo(elem) != null) {
-                res = true;
-            }
+    private Nodo insert_recursive(Nodo actual, T elem) {
+        if (actual == null) {
+            actual = new Nodo(elem);
         }
-        return res;
-    }
-
-    public Nodo getNodo(T elem) {
-        Nodo actual = _raiz;
         int diff = elem.compareTo(actual.value);
-        while (diff != 0) {
-            if (diff > 0 && actual.right != null) {
-                actual = actual.right;
-            } else if (diff < 0 && actual.left != null) {
-                actual = actual.left;
-            } else {
-                return null;
-            }
-            diff = elem.compareTo(actual.value);
+        if (diff > 0) {
+            actual.right = insert_recursive(actual.right, elem);
+        } else if (diff < 0) {
+            actual.left = insert_recursive(actual.left, elem);
         }
         return actual;
     }
 
+    public boolean pertenece(T elem) {
+        return pertenece_recursive(_raiz, elem);
+    }
+
+    private boolean pertenece_recursive(Nodo actual, T elem) {
+        if (actual != null) {
+            int diff = elem.compareTo(actual.value);
+            if (diff == 0) {
+                return true;
+            }
+            if (diff > 0) {
+                return pertenece_recursive(actual.right, elem);
+            }
+            if (diff < 0) {
+                return pertenece_recursive(actual.left, elem);
+            }
+        }
+        return false;
+    }
+
     public void eliminar(T elem) {
-        if (pertenece(elem)) {
-            Nodo del = getNodo(elem);
-            if (del != _raiz) {
-                int diff = elem.compareTo(del.father.value);
-                if (del.left == null && del.right == null) {
-                    if (diff > 0) {
-                        del.father.right = null;
-                    }
-                    if (diff < 0) {
-                        del.father.left = null;
-                    }
-                }
+        _raiz = eliminar_recursive(_raiz, elem);
+        _len -= 1;
+    }
 
-                else if (del.left != null && del.right == null) {
-                    if (diff > 0) {
-                        del.father.right = del.left;
-                    }
-                    if (diff < 0) {
-                        del.father.left = del.left;
-                    }
-                } else if (del.left == null && del.right != null) {
-                    if (diff > 0) {
-                        del.father.right = del.right;
-                    }
-                    if (diff < 0) {
-                        del.father.left = del.right;
-                    }
-                }
-
-                else if (del.left != null && del.right != null) {
-                    Nodo actual = del.right;
-                    while (actual.left != null) {
-                        actual = actual.left;
-                    }
-                    del.value = actual.value;
-                    actual.father.left = actual.right;
-                }
-            } else {
-                if (del.left == null && del.right == null) {
-                    _raiz = null;
-                } else if (del.right != null && del.left == null) {
-                    _raiz = del.right;
-                    _raiz.father = null;
-                } else if (del.right == null && del.left != null) {
-                    _raiz = del.left;
-                    _raiz.father = null;
-                } else if (del.right != null && del.right != null) {
-                    Nodo actual = del.right;
-                    while (actual.left != null) {
-                        actual = actual.left;
-                    }
-                    del.value = actual.value;
-                    actual.father.left = actual.right;
-                }
-
+    private Nodo eliminar_recursive(Nodo actual, T elem) {
+        if (actual == null) {
+            return actual;
+        }
+        int diff = elem.compareTo(actual.value);
+        if (diff > 0) {
+            actual.right = eliminar_recursive(actual.right, elem);
+        } else if (diff < 0) {
+            actual.left = eliminar_recursive(actual.left, elem);
+        } else {
+            if (actual.left == null) {
+                return actual.right;
+            } else if (actual.right == null) {
+                return actual.left;
             }
 
-            _len -= 1;
+            actual.value = minimo_desde(actual.right);
+            actual.right = eliminar_recursive(actual.right, actual.value);
         }
+        return actual;
     }
 
     public String toString() {
-        throw new UnsupportedOperationException("No implementada aun");
+        return "{" + to_String_recursive(_raiz) + "}";
     }
 
-    public void inorder() {
-
+    private String to_String_recursive(Nodo actual) {
+        String res = "";
+        if (actual != null) {
+            String str_izquierdo = to_String_recursive(actual.left);
+            String str_valor = actual.value.toString();
+            String str_derecho = to_String_recursive(actual.right);
+            if (str_izquierdo != "") {
+                str_izquierdo += ",";
+            }
+            if (str_derecho != "") {
+                str_valor += ",";
+            }
+            res = str_izquierdo + str_valor + str_derecho;
+        }
+        return res;
     }
 
     private class ABB_Iterador implements Iterador<T> {
