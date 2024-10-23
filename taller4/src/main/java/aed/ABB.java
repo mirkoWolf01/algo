@@ -1,6 +1,8 @@
 package aed;
 
 import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 // Todos los tipos de datos "Comparables" tienen el método compareTo()
 // elem1.compareTo(elem2) devuelve un entero. Si es mayor a 0, entonces elem1 > elem2
@@ -9,11 +11,11 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
     private int _len;
 
     private class Nodo {
-        public Nodo left, right;
+        public Nodo left, right, father;
         public T value;
 
         public Nodo(T _val) {
-            left = right = null;
+            left = right = father = null;
             value = _val;
         }
     }
@@ -23,20 +25,20 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         _len = 0;
     }
 
-    public boolean isNull() {
-        return _raiz == null;
-    }
-
     public int cardinal() {
         return _len;
     }
 
     public T minimo() {
+        return minimo_desde(_raiz);
+    }
+
+    private Nodo minimo_nodo() {
         Nodo actual = _raiz;
         while (actual.left != null) {
             actual = actual.left;
         }
-        return actual.value;
+        return actual;
     }
 
     private T minimo_desde(Nodo actual) {
@@ -68,8 +70,10 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         int diff = elem.compareTo(actual.value);
         if (diff > 0) {
             actual.right = insert_recursive(actual.right, elem);
+            actual.right.father = actual;
         } else if (diff < 0) {
             actual.left = insert_recursive(actual.left, elem);
+            actual.left.father = actual;
         }
         return actual;
     }
@@ -143,16 +147,35 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
     }
 
     private class ABB_Iterador implements Iterador<T> {
-        private Nodo _actual;
+        private int i = 0;
+        private List<T> lista_ordenada = make_list();
 
         public boolean haySiguiente() {
-            throw new UnsupportedOperationException("No implementada aun");
+            return lista_ordenada.size() - 1 > 0;
         }
 
         public T siguiente() {
-            throw new UnsupportedOperationException("No implementada aun");
+            T res = null;
+            if (haySiguiente()) {
+                res = lista_ordenada.get(i);
+                i += 1;
+            }
+            return res;
         }
 
+        private List<T> make_list() {
+            List<T> res = new ArrayList<T>();
+            inorder(_raiz, res);
+            return res;
+        }
+
+        private void inorder(Nodo actual, List<T> list) {
+            if (actual != null) {
+                inorder(actual.left, list);
+                list.add(actual.value);
+                inorder(actual.right, list);
+            }
+        }
     }
 
     public Iterador<T> iterador() {
