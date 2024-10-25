@@ -1,8 +1,6 @@
 package aed;
 
 import java.util.*;
-import java.util.ArrayList;
-import java.util.List;
 
 // Todos los tipos de datos "Comparables" tienen el método compareTo()
 // elem1.compareTo(elem2) devuelve un entero. Si es mayor a 0, entonces elem1 > elem2
@@ -11,11 +9,11 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
     private int _len;
 
     private class Nodo {
-        public Nodo left, right, father;
+        public Nodo left, right;
         public T value;
 
         public Nodo(T _val) {
-            left = right = father = null;
+            left = right = null;
             value = _val;
         }
     }
@@ -70,10 +68,8 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         int diff = elem.compareTo(actual.value);
         if (diff > 0) {
             actual.right = insert_recursive(actual.right, elem);
-            actual.right.father = actual;
         } else if (diff < 0) {
             actual.left = insert_recursive(actual.left, elem);
-            actual.left.father = actual;
         }
         return actual;
     }
@@ -125,33 +121,44 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         return actual;
     }
 
+    // Queda mas corto usando el iterador. Pero abajo esta la version sin iterador.
     public String toString() {
-        return "{" + to_String_recursive(_raiz) + "}";
+        Iterador<T> it = new ABB_Iterador();
+        String res = "{";
+        while (it.haySiguiente()) {
+            res += it.siguiente().toString() + ",";
+        }
+        if (res.length() > 1) {
+            res = res.substring(0, res.length() - 1);
+        }
+        return res + "}";
     }
 
-    private String to_String_recursive(Nodo actual) {
-        String res = "";
-        if (actual != null) {
-            String str_izquierdo = to_String_recursive(actual.left);
-            String str_valor = actual.value.toString();
-            String str_derecho = to_String_recursive(actual.right);
-            if (str_izquierdo != "") {
-                str_izquierdo += ",";
-            }
-            if (str_derecho != "") {
-                str_valor += ",";
-            }
-            res = str_izquierdo + str_valor + str_derecho;
-        }
-        return res;
-    }
+    /*
+     * private String to_String_recursive(Nodo actual) {
+     * String res = "";
+     * if (actual != null) {
+     * String str_izquierdo = to_String_recursive(actual.left);
+     * String str_valor = actual.value.toString();
+     * String str_derecho = to_String_recursive(actual.right);
+     * if (str_izquierdo != "") {
+     * str_izquierdo += ",";
+     * }
+     * if (str_derecho != "") {
+     * str_valor += ",";
+     * }
+     * res = str_izquierdo + str_valor + str_derecho;
+     * }
+     * return res;
+     * }
+     */
 
     private class ABB_Iterador implements Iterador<T> {
         private int i = 0;
         private List<T> lista_ordenada = make_list();
 
         public boolean haySiguiente() {
-            return lista_ordenada.size() - 1 > 0;
+            return lista_ordenada.size() - i > 0;
         }
 
         public T siguiente() {
