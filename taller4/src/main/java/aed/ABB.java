@@ -27,16 +27,16 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         return _len;
     }
 
-    public T minimo() {
-        return minimo_desde(_raiz);
+    // Otra Forma de calcular el tamaño // Es O(n)
+    private int cantAux(Nodo actual) {
+        if (actual != null) {
+            return 1 + cantAux(actual.left) + cantAux(actual.right);
+        }
+        return 0;
     }
 
-    private Nodo minimo_nodo() {
-        Nodo actual = _raiz;
-        while (actual.left != null) {
-            actual = actual.left;
-        }
-        return actual;
+    public T minimo() {
+        return minimo_desde(_raiz);
     }
 
     private T minimo_desde(Nodo actual) {
