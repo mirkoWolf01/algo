@@ -25,6 +25,7 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
 
     public int cardinal() {
         return _len;
+        // return cantAux(_raiz)
     }
 
     // Otra Forma de calcular el tamaño // Es O(n)
@@ -34,6 +35,23 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         }
         return 0;
     }
+
+    // NO SIRVE DE NADA
+    private int cant_apariciones(T valor) {
+        return cant_apariciones_aux(_raiz, valor);
+    }
+
+    private int cant_apariciones_aux(Nodo actual, T valor) {
+        int res = 0;
+        if (actual == null) {
+            return 0;
+        }
+        if (valor.compareTo(actual.value) == 0) {
+            res = 1;
+        }
+        return res + cant_apariciones_aux(actual.left, valor) + cant_apariciones_aux(actual.right, valor);
+    }
+    //
 
     public T minimo() {
         return minimo_desde(_raiz);
